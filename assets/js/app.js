@@ -30,13 +30,9 @@ d3.csv("../data/data.csv")
     // ==============================
     healthData.forEach(function(data) {
       data.poverty = +data.poverty;
-      //data.povertyMoe = +data.povertyMoe;
-	  data.age = +data.age;
-	  //data.ageMoe = +data.ageMoe;
+ 	  data.age = +data.age;
 	  data.income = +data.income;
-	  //data.incomeMoe = +incomeMoe;
 	  data.healthcare = +data.healthcare;
-	  //data.healthcareLow  = +healthcareLow;
 	  data.obesity = +data.obesity;
 	  data.smokes  = +data.smokes;
     });
@@ -46,14 +42,15 @@ d3.csv("../data/data.csv")
 //	console.log(Math.round(d3.max(healthData, d => d.healthcare) +1));
 //	console.log(Math.round(d3.min(healthData, d => d.healthcare) - 1 ));
 
-	// Step 2: Create scale functions
+	// Step 2: Create scale functions - make domain min smaller than the data min, and max bigger than the data max
+	// so scatter plot circles clear the axes
     // ==============================
     var xLinearScale = d3.scaleLinear()
       .domain([Math.round(d3.min(healthData, d => d.poverty) - 1 ), Math.round(d3.max(healthData, d => d.poverty) +1)])
       .range([0, width]);
 
     var yLinearScale = d3.scaleLinear()
-      .domain([Math.round(d3.min(healthData, d => d.healthcare) - 1), Math.round(d3.max(healthData, d => d.healthcare) +1)])
+      .domain([Math.round(d3.min(healthData, d => d.healthcare) - 2), Math.round(d3.max(healthData, d => d.healthcare) +1)])
       .range([height, 0]);
 	  
     // Step 3: Create axis functions
@@ -82,13 +79,17 @@ d3.csv("../data/data.csv")
     .attr("fill", "pink")
     .attr("opacity", ".5");
 	
-//   var textGroup = chartGroup.selectAll("text")
-//	 .attr("x", d => xLinearScale(d.poverty))             
-//   .attr("y", d => yLinearScale(d.healthcare))
-//   .attr("text-anchor", "middle")  
-//    .style("font-size", "10px")
-//    .attr('fill','#cccccc')
-//    .text(d.abbr);
+   // Add state abbreviation to circle	
+   var textGroup = chartGroup.selectAll("text")
+    .data(healthData)
+	.enter()
+    .append("text")
+	.attr("x", d => xLinearScale(d.poverty))             
+    .attr("y", d => yLinearScale(d.healthcare))
+    .attr("text-anchor", "middle")  
+    .style("font-size", "10px")
+    .attr('fill','purple')
+    .text(d => d.abbr);
 	
     // Step 6: Initialize tool tip
     // ==============================
